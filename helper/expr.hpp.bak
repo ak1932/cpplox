@@ -1,0 +1,70 @@
+/* Auto generated using helper method generate_ast() for the CFG
+Binary: Expr left, Token oper, Expr right
+Grouping: Expr expression
+Lit: Literal value
+Unary: Token oper, Expr right
+*/
+#include "token.h"
+
+class Binary;
+
+template <typename T>
+class Visitor {
+    virtual T visitBinaryExpr(Binary expr) = 0;
+};
+
+class Expr {
+    template <typename T>
+    T accept(Visitor<T> visitor);
+};
+
+class Binary : public Expr {
+public:
+    Binary(Expr left, Token oper, Expr right)
+        : left(left)
+        , oper(oper)
+        , right(right)
+    {
+    }
+
+    template <typename T>
+    T accept(Visitor<T> visitor) {
+        return visitor.visitBinaryExpr(this);
+    }
+
+    Expr left;
+    Token oper;
+    Expr right;
+};
+
+class Grouping : public Expr {
+public:
+    Grouping(Expr expression)
+        : expression(expression)
+    {
+    }
+
+    Expr expression;
+};
+
+class Lit : public Expr {
+public:
+    Lit(Literal value)
+        : value(value)
+    {
+    }
+
+    Literal value;
+};
+
+class Unary : public Expr {
+public:
+    Unary(Token oper, Expr right)
+        : oper(oper)
+        , right(right)
+    {
+    }
+
+    Token oper;
+    Expr right;
+};

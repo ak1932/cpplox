@@ -1,0 +1,15 @@
+#pragma once
+
+#include "common.hpp"
+#include "expr.hpp"
+
+class AstPrinter : public Visitor {
+    Literal parenthesize(std::string name, const std::vector<Expr*>& exprs);
+
+public:
+    Literal print(std::unique_ptr<Expr>& expr);
+    Literal visitBinaryExpr(Binary& expr) override;
+    Literal visitGroupingExpr(Grouping& expr) override;
+    Literal visitLitExpr(Lit& expr) override;
+    Literal visitUnaryExpr(Unary& expr) override;
+};

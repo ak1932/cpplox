@@ -1,0 +1,42 @@
+#include "astprinter.hpp"
+
+Literal AstPrinter::parenthesize(std::string name, const std::vector<Expr*>&& exprs)
+{
+    std::string builder;
+    builder += "(" + name;
+    for (auto expr : exprs) {
+        builder.append(" ");
+        builder.append(std::get<std::string>(expr->accept(*this)));
+    }
+    builder.append(")");
+    return builder;
+}
+
+Literal AstPrinter::print(std::unique_ptr<Expr>& expr)
+{
+    return expr->accept(*this);
+}
+
+Literal AstPrinter::visitBinaryExpr(Binary& expr)
+{
+    return parenthesize(expr.oper.lexeme, { expr.left.get(), expr.right.get() });
+}
+
+Literal AstPrinter::visitGroupingExpr(Grouping& expr)
+{
+    return parenthesize("group", { expr.expression.get() });
+}
+
+Literal AstPrinter::visitLitExpr(Lit& expr)
+{
+    if (std::holds_alternative<double>(expr.value)) {
+        return std::to_string(std::get<double>(expr.value));
+    } else {
+        return std::get<std::string>(expr.value);
+    }
+}
+
+Literal AstPrinter::visitUnaryExpr(Unary& expr)
+{
+    return parenthesize(expr.oper.lexeme, { expr.right.get() });
+}
